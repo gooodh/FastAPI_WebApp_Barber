@@ -11,7 +11,7 @@ class Settings(BaseSettings):
         "{time:YYYY-MM-DD at HH:mm:ss} | {level} | {name}:{function}:{line} - {message}"
     )
     LOG_ROTATION: str = "10 MB"
-    DB_URL: str = "sqlite+aiosqlite:///data/db.sqlite3"
+    DB_URL: str = "sqlite+aiosqlite:///app/data/db.sqlite3"
     
     BOT_TOKEN: str
     BASE_SITE: str

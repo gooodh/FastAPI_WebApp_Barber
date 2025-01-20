@@ -1,8 +1,8 @@
-"""added models User, Master, Service, Aplication
+"""aqlite
 
-Revision ID: 25ca1c0c73e4
-Revises: dec3da2b7800
-Create Date: 2025-01-17 10:55:27.536832
+Revision ID: d9e4687f1ace
+Revises: 
+Create Date: 2025-01-20 10:34:21.661977
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '25ca1c0c73e4'
-down_revision: Union[str, None] = 'dec3da2b7800'
+revision: str = 'd9e4687f1ace'
+down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -23,23 +23,23 @@ def upgrade() -> None:
     op.create_table('masters',
     sa.Column('master_id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('master_name', sa.String(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
-    sa.Column('updated_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
     sa.PrimaryKeyConstraint('master_id')
     )
     op.create_table('services',
     sa.Column('service_id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('service_name', sa.String(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
-    sa.Column('updated_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
     sa.PrimaryKeyConstraint('service_id')
     )
     op.create_table('users',
     sa.Column('telegram_id', sa.BigInteger(), nullable=False),
     sa.Column('first_name', sa.String(), nullable=False),
     sa.Column('username', sa.String(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
-    sa.Column('updated_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
     sa.PrimaryKeyConstraint('telegram_id')
     )
     op.create_table('applications',
@@ -51,8 +51,8 @@ def upgrade() -> None:
     sa.Column('appointment_time', sa.Time(), nullable=False),
     sa.Column('gender', sa.Enum('male', 'female', name='genderenum'), nullable=False),
     sa.Column('client_name', sa.String(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
-    sa.Column('updated_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
     sa.ForeignKeyConstraint(['master_id'], ['masters.master_id'], ),
     sa.ForeignKeyConstraint(['service_id'], ['services.service_id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.telegram_id'], ),
