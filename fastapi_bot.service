@@ -1,0 +1,13 @@
+[Unit]
+Description=My FastAPI TG Bot
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/home/user/project/FastAPI_WebApp_Barber/env/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+WorkingDirectory=/home/user/project/FastAPI_WebApp_Barber/
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
