@@ -25,7 +25,6 @@ async def notify_admins(message):
 
 async def start_bot():
 
-    await set_commands()
     dp.include_router(user_router)
     dp.include_router(admin_router)
 
