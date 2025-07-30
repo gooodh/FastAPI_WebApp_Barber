@@ -1,3 +1,4 @@
+import asyncio
 from loguru import logger
 from contextlib import asynccontextmanager
 
@@ -5,37 +6,46 @@ from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI, Request
 
 from aiogram.types import Update
+from aiogram.exceptions import TelegramRetryAfter
 
 from app.bot.create_bot import bot, dp, stop_bot, start_bot
-from app.bot.handlers.admin_router import admin_router
-from app.bot.handlers.user_router import user_router
+
 from app.config import settings
 from app.pages.router import router as router_pages
 from app.api.router import router as router_api
 
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("Starting bot setup...")
-    dp.include_router(user_router)
-    dp.include_router(admin_router)
+
     await start_bot()
     webhook_url = settings.get_webhook_url()
-    await bot.set_webhook(url=webhook_url,
-                          allowed_updates=dp.resolve_used_update_types(),
-                          drop_pending_updates=True)
-    logger.info(f"Webhook set to {webhook_url}")
+    try:
+        webhook_info = await bot.get_webhook_info()
+        if webhook_info.url != webhook_url:
+            await bot.set_webhook(
+                url=webhook_url,
+                allowed_updates=dp.resolve_used_update_types(),
+                drop_pending_updates=True,
+            )
+            logger.success(f"Вебхук установлен: {webhook_url}")
+        else:
+            logger.info("Вебхук уже установлен, повторная установка не требуется.")
+    except TelegramRetryAfter as e:
+        logger.warning(
+            f"Ошибка установки вебхука: {e}. Повторная попытка через {e.retry_after} секунд."
+        )
+        await asyncio.sleep(e.retry_after)
+    except Exception as e:
+        logger.error(f"Ошибка при установке вебхука: {e}")
+
     yield
-    logger.info("Shutting down bot...")
-    await bot.delete_webhook()
     await stop_bot()
-    logger.info("Webhook deleted")
 
 
 app = FastAPI(lifespan=lifespan)
 
-app.mount('/static', StaticFiles(directory='app/static'), 'static')
+app.mount("/static", StaticFiles(directory="app/static"), "static")
 
 
 @app.post("/barber")
